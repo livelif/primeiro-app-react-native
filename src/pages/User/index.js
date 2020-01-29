@@ -29,6 +29,13 @@ export default class User extends Component {
 
   state = {
     stars: [],
+    page: 1,
+  }
+
+  handleNavigate = (starred, pageName) => {
+    const { navigation } = this.props;
+    console.tron.log(pageName);
+    navigation.navigate(pageName, { starred });
   }
 
   async componentDidMount() {
@@ -39,6 +46,22 @@ export default class User extends Component {
 
     this.setState({ stars: response.data });
   };
+
+  loadStars = async () => {
+    const { page } = this.state;
+    const nextPage = page + 1;
+
+    const { navigation } = this.props;
+    const user = navigation.getParam('user');
+
+    console.tron.log('next page ' + nextPage);
+    console.tron.log('url: ' + `users/${user.login}/starred?page=${nextPage}`)
+    const response = await api.get(`users/${user.login}/starred?page=${nextPage}`);
+    console.tron.log(response);
+    this.setState({
+      stars: [ ...this.state.stars, ...response.data]
+    });
+  }
 
   render() {
     const { navigation } = this.props;
@@ -56,10 +79,12 @@ export default class User extends Component {
         </Header>
 
         <Stars
+            onEndReached={this.loadStars}
+            onEndReachedThreshold={0.2}
             data={stars}
             keyExtractor={star => String(star.id)}
             renderItem = {({ item }) => (
-              <Starred>
+              <Starred onPress={() => this.handleNavigate(item, 'Github')}>
                 <OwnerAvatar source={{ uri: item.owner.avatar_url}} />
                 <Info>
                   <Title>{item.name}</Title>

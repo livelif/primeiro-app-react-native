@@ -64,10 +64,10 @@ export default class Main extends Component {
     Keyboard.dismiss();
   }
 
-  handleNavigate = (user) => {
+  handleNavigate = (user, pageName) => {
     const { navigation } = this.props;
 
-    navigation.navigate('User', { user});
+    navigation.navigate(pageName, { user});
   }
 
   render() {
@@ -100,8 +100,7 @@ export default class Main extends Component {
               <Avatar source={{ uri: item.avatar }} />
               <Name>{ item.name }</Name>
               <Bio>{ item.bio }</Bio>
-
-              <ProfileButton onPress={() => this.handleNavigate(item)}>
+              <ProfileButton onPress={() => this.handleNavigate(item, 'User')}>
                 <ProfileButtonText>Ver perfil</ProfileButtonText>
               </ProfileButton>
             </User>
